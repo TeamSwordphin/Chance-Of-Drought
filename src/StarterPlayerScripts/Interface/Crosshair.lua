@@ -3,19 +3,20 @@ local CrosshairService = {}
 local MainGui
 
 function CrosshairService:Start()
-	MainGui = self.Player.PlayerGui:WaitForChild("MainGui")
+	MainGui = self.Player.PlayerGui.MainGui
 
-	local crosshair = MainGui:WaitForChild("Mouse"):WaitForChild("Gun")
-	local bottom = crosshair:WaitForChild("Bottom")
-	local top = crosshair:WaitForChild("Top")
-	local left = crosshair:WaitForChild("Left")
-	local right = crosshair:WaitForChild("Right")
+	local crosshair = MainGui.Mouse.Gun
+	local bottom = crosshair.Bottom
+	local top = crosshair.Top
+	local left = crosshair.Left
+	local right = crosshair.Right
 
 	local baseEquipment = self.Controllers.Character.BaseEquipment
 	local lerp = self.Shared.Lerp
 	local recoil = self.Controllers.Character.BaseCamera.Recoil
 
-	--- Bind to render
+	-- Crosshair Logic
+
 	self.Shared.CommonServices.RunService:BindToRenderStep("Crosshair", 11, function(delta)
 		local offset = 0
 
