@@ -1,7 +1,7 @@
 local UIService = {}
 
 function UIService:Start()
-	self.GameUI = self.Player.PlayerGui:WaitForChild("GameUI")
+	self.GameUI = self.Player.PlayerGui.GameUI
 
 	local bars = self.GameUI.Bottom.Bars
 	local controls = self.GameUI.Bottom.Controls
