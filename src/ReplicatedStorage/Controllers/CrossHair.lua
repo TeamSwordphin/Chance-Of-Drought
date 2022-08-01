@@ -1,9 +1,17 @@
-local CrosshairService = {}
+local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
+
+local RunService = game:GetService("RunService")
+local Player = game:GetService("Players").LocalPlayer
+
+local Crosshair = Knit.CreateController({
+	Name = "Crosshair",
+	Camera = workspace.Camera,
+})
 
 local MainGui
 
-function CrosshairService:Start()
-	MainGui = self.Player.PlayerGui.MainGui
+function Crosshair:KnitStart()
+	MainGui = Player.PlayerGui.MainGui
 
 	local crosshair = MainGui.Mouse.Gun
 	local bottom = crosshair.Bottom
@@ -11,17 +19,17 @@ function CrosshairService:Start()
 	local left = crosshair.Left
 	local right = crosshair.Right
 
-	local baseEquipment = self.Controllers.Character.BaseEquipment
+	local BaseEquipment = Knit.GetController("BaseEquipment")
 	local lerp = self.Shared.Lerp
-	local recoil = self.Controllers.Character.BaseCamera.Recoil
+	local recoil = Knit.GetController("BaseCamera").Recoil
 
-	-- Crosshair Logic
+	--- Crosshair Logic
 
-	self.Shared.CommonServices.RunService:BindToRenderStep("Crosshair", 11, function(delta)
+	RunService:BindToRenderStep("Crosshair", 11, function(delta)
 		local offset = 0
 
-		if baseEquipment.CurrentEquipped then
-			offset += baseEquipment.CurrentEquipped.Config.Spread
+		if BaseEquipment.CurrentEquipped then
+			offset += BaseEquipment.CurrentEquipped.Config.Spread
 		end
 
 		local recoilOffset = Vector3.new(recoil.Position.X * 0.5, recoil.Position.Y, recoil.Position.Z)
@@ -44,8 +52,6 @@ function CrosshairService:Start()
 	--- Connect events
 end
 
-function CrosshairService:Init()
-	self.Camera = workspace.Camera
-end
+function Crosshair:KnitInit() end
 
-return CrosshairService
+return Crosshair

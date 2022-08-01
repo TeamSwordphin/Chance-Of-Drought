@@ -1,4 +1,16 @@
-local Controller = {}
+local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
+local Input = require(game:GetService("ReplicatedStorage").Packages.Input)
+
+local UserInputService = game:GetService("UserInputService")
+local Player = game:GetService("Players").LocalPlayer
+local RunService = game:GetService("RunService")
+
+local BaseCamera = Knit.CreateController({
+	Name = "BaseCamera",
+	Camera = workspace.Camera,
+	MouseWorldPosition = Vector3.new(),
+	Recoil = nil, -- spring
+})
 
 local BASE_FOV = 70
 local BASE_OFFSET = Vector3.new(0, 5, 0)
@@ -6,11 +18,11 @@ local BASE_SENSITIVITY = Vector2.new(1 / 250, 1 / 250)
 
 local MIN_Y, MAX_Y = -1.4, 1.4
 
-function Controller:Start()
+function BaseCamera:KnitStart()
 	local character, humanoid, rootPart, raycastParams
 	local x, y = 0, 0
 
-	local mouse = self.Controllers.UserInput:Get("Mouse")
+	local mouse = Input.Mouse.new()
 
 	local function onCharacterAdded(newCharacter)
 		character = newCharacter
@@ -20,12 +32,12 @@ function Controller:Start()
 		raycastParams = RaycastParams.new()
 		raycastParams.FilterDescendantsInstances = { character }
 
+		mouse:LockCenter() -- if lock issues this might be it
 		self.Camera.CameraType = Enum.CameraType.Scriptable
 	end
 
 	local function controlRenderStep(delta)
-		mouse:LockCenter()
-		mouse:SetMouseIconEnabled(false)
+		UserInputService.MouseIconEnabled = false
 
 		if not rootPart or humanoid.Health <= 0 then
 			return
@@ -80,18 +92,16 @@ function Controller:Start()
 	end
 
 	--- Init
-	onCharacterAdded(self.Player.Character or self.Player.CharacterAdded:Wait())
+	onCharacterAdded(Player.Character or Player.CharacterAdded:Wait())
 
 	--- Connect events
-	self.Player.CharacterAdded:Connect(onCharacterAdded)
-	self.Shared.CommonServices.RunService:BindToRenderStep("Camera", 4, controlRenderStep)
+	Player.CharacterAdded:Connect(onCharacterAdded)
+	RunService:BindToRenderStep("Camera", 4, controlRenderStep)
 	mouse.Moved:Connect(onMouseMoved)
 end
 
-function Controller:Init()
-	self.Camera = workspace.Camera
-	self.MouseWorldPosition = Vector3.new()
+function BaseCamera:KnitInit()
 	self.Recoil = self.Shared.Spring:Create(1, 100, 10, 2)
 end
 
-return Controller
+return BaseCamera

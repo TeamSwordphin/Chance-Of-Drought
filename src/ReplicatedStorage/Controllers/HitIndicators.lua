@@ -1,4 +1,13 @@
-local IndicatorService = {}
+local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
+
+local Player = game:GetService("Players").LocalPlayer
+local RunService = game:GetService("RunService")
+
+local HitIndicators = Knit.CreateController({
+	Name = "HitIndicators",
+	Camera = workspace.Camera,
+	Indicators = {},
+})
 
 local EMPTY_VECTOR = Vector3.new()
 local HIT_INDICATOR_LIFE = 2
@@ -24,11 +33,11 @@ function IndicatorService:_NewIndicator(direction, damage)
 	table.insert(self.Indicators, indicator)
 end
 
-function IndicatorService:Start()
-	MainGui = self.Player.PlayerGui:WaitForChild("MainGui")
+function HitIndicators:KnitStart()
+	MainGui = Player.PlayerGui.MainGui
 
 	--- Bind the indicators to render
-	self.Shared.CommonServices.RunService:BindToRenderStep("HitIndicators", 10, function()
+	RunService:BindToRenderStep("HitIndicators", 10, function()
 		local cameraLookVector = self.Camera.CFrame.LookVector
 		local cframeDirection = CFrame.lookAt(EMPTY_VECTOR, Vector3.new(cameraLookVector.X, 0, cameraLookVector.Z))
 		local osClock = os.clock()
@@ -57,9 +66,6 @@ function IndicatorService:Start()
 	--- Connect events
 end
 
-function IndicatorService:Init()
-	self.Camera = workspace.Camera
-	self.Indicators = {}
-end
+function HitIndicators:KnitInit() end
 
-return IndicatorService
+return HitIndicators

@@ -1,8 +1,13 @@
-local UIService = {}
+local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
 
-function UIService:Start()
-	self.GameUI = self.Player.PlayerGui.GameUI
+local Player = game:GetService("Players").LocalPlayer
 
+local Hud = Knit.CreateController({
+	Name = "Hud",
+	GameUI = Player.PlayerGui.GameUI,
+})
+
+function Hud:KnitStart()
 	local bars = self.GameUI.Bottom.Bars
 	local controls = self.GameUI.Bottom.Controls
 	local gameInfo = self.GameUI.Top.GameUI
@@ -63,10 +68,10 @@ function UIService:Start()
 	end
 
 	--- Init
-	onCharacterAdded(self.Player.Character or self.Player.CharacterAdded:Wait())
+	onCharacterAdded(Player.Character or Player.CharacterAdded:Wait())
 
 	--- Connect events
-	self.Player.CharacterAdded:Connect(onCharacterAdded)
+	Player.CharacterAdded:Connect(onCharacterAdded)
 	workspace:GetAttributeChangedSignal("GameTime"):Connect(onTimerChanged)
 	character:GetAttributeChangedSignal("Shield"):Connect(onShieldChanged)
 	character:GetAttributeChangedSignal("ShieldMax"):Connect(onShieldChanged)
@@ -74,6 +79,6 @@ function UIService:Start()
 	humanoid:GetPropertyChangedSignal("Health"):Connect(onHealthChanged)
 end
 
-function UIService:Init() end
+function Hud:KnitInit() end
 
-return UIService
+return Hud

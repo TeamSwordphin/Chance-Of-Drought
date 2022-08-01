@@ -1,10 +1,17 @@
-local Controller = {}
+local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
+local Input = require(game:GetService("ReplicatedStorage").Packages.Input)
 
-local ReplicatedStorage
+local Player = game:GetService("Players").LocalPlayer
 
-function Controller:Start()
+local BaseEquipment = Knit.CreateController({
+	Name = "BaseEquipment",
+	CurrentEquipped = nil,
+	Weapons = {},
+})
+
+function BaseEquipment:KnitStart()
 	local character, humanoid, rootPart
-	local mouse = self.Controllers.UserInput:Get("Mouse")
+	local mouse = Input.Mouse.new()
 
 	local function onCharacterAdded(newCharacter)
 		character = newCharacter
@@ -67,18 +74,14 @@ function Controller:Start()
 	end
 
 	--- Init
-	onCharacterAdded(self.Player.Character or self.Player.CharacterAdded:Wait())
+	onCharacterAdded(Player.Character or Player.CharacterAdded:Wait())
 
 	--- Connect events
-	self.Player.CharacterAdded:Connect(onCharacterAdded)
+	Player.CharacterAdded:Connect(onCharacterAdded)
 	mouse.LeftDown:Connect(onKeyDown)
 	mouse.LeftUp:Connect(onKeyUp)
 end
 
-function Controller:Init()
-	self.CurrentEquipped = nil
-	self.Weapons = {}
-	ReplicatedStorage = self.Shared.CommonServices.ReplicatedStorage
-end
+function BaseEquipment:KnitInit() end
 
-return Controller
+return BaseEquipment

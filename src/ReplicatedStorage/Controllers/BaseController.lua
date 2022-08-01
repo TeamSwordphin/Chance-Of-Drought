@@ -1,4 +1,14 @@
-local Controller = {}
+local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
+local Input = require(game:GetService("ReplicatedStorage").Packages.Input)
+
+local TweenService = game:GetService("TweenService")
+local Player = game:GetService("Players").LocalPlayer
+local RunService = game:GetService("RunService")
+
+local BaseController = Knit.CreateController({
+	Name = "BaseController",
+	Camera = workspace.Camera,
+})
 
 local EMPTY_VECTOR = Vector3.new()
 
@@ -7,13 +17,12 @@ local BASE_SPRINT_FACTOR = 2
 
 local BASE_ROTATION_TIMER = 2
 
-function Controller:Start()
+function BaseController:KnitStart()
 	local character, humanoid, rootPart
 	local rotation = CFrame.new()
 
-	local keyboard = self.Controllers.UserInput:Get("Keyboard")
+	local keyboard = Input.Keyboard.new()
 	local equipment = self.Controllers.Character.BaseEquipment
-	local tweenService = self.Shared.CommonServices.TweenService
 
 	local function onCharacterAdded(newCharacter)
 		character = newCharacter
@@ -33,8 +42,7 @@ function Controller:Start()
 
 		--- Rotate the user
 		if not rootPart.Anchored and not humanoid.AutoRotate then
-			tweenService
-				:Create(rootPart, TweenInfo.new(0.1), { CFrame = CFrame.new(rootPart.Position) * rotation })
+			TweenService:Create(rootPart, TweenInfo.new(0.1), { CFrame = CFrame.new(rootPart.Position) * rotation })
 				:Play()
 		end
 
@@ -64,14 +72,12 @@ function Controller:Start()
 	onCharacterAdded(self.Player.Character or self.Player.CharacterAdded:Wait())
 
 	--- Connect events
-	self.Player.CharacterAdded:Connect(onCharacterAdded)
-	self.Shared.CommonServices.RunService:BindToRenderStep("Control", 3, controlRenderStep)
+	Player.CharacterAdded:Connect(onCharacterAdded)
+	RunService:BindToRenderStep("Control", 3, controlRenderStep)
 	keyboard.KeyDown:Connect(onKeyDown)
 	keyboard.KeyUp:Connect(onKeyUp)
 end
 
-function Controller:Init()
-	self.Camera = workspace.Camera
-end
+function BaseController:KnitInit() end
 
-return Controller
+return BaseController
