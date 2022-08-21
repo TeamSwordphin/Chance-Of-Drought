@@ -4,7 +4,7 @@ local Player = game:GetService("Players").LocalPlayer
 
 local Hud = Knit.CreateController({
 	Name = "Hud",
-	GameUI = Player.PlayerGui.GameUI,
+	GameUI = Player.PlayerGui.HUD,
 })
 
 function Hud:KnitStart()
