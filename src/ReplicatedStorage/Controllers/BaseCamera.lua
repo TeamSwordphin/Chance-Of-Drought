@@ -5,6 +5,8 @@ local UserInputService = game:GetService("UserInputService")
 local Player = game:GetService("Players").LocalPlayer
 local RunService = game:GetService("RunService")
 
+local Spring
+
 local BaseCamera = Knit.CreateController({
 	Name = "BaseCamera",
 	Camera = workspace.Camera,
@@ -101,7 +103,8 @@ function BaseCamera:KnitStart()
 end
 
 function BaseCamera:KnitInit()
-	self.Recoil = self.Shared.Spring:Create(1, 100, 10, 2)
+	Spring = Knit.GetController("SpringController")
+	self.Recoil = Spring:Create(1, 100, 10, 2)
 end
 
 return BaseCamera
