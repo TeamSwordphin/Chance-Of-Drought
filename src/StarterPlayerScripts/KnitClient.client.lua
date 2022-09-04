@@ -11,7 +11,6 @@ local playerGui = game:GetService("Players").LocalPlayer.PlayerGui
 for _, screenGui in ipairs(UIs:GetChildren()) do
 	screenGui:Clone().Parent = playerGui
 end
---
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
