@@ -11,7 +11,7 @@ local Crosshair = Knit.CreateController({
 local MainGui
 
 function Crosshair:KnitStart()
-	MainGui = Player.PlayerGui.MainGui
+	MainGui = Player.PlayerGui.Crosshair
 
 	local crosshair = MainGui.Mouse.Gun
 	local bottom = crosshair.Bottom
