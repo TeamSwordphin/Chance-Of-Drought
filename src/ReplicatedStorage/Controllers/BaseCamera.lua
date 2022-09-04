@@ -99,7 +99,7 @@ function BaseCamera:KnitStart()
 	--- Connect events
 	Player.CharacterAdded:Connect(onCharacterAdded)
 	RunService:BindToRenderStep("Camera", 4, controlRenderStep)
-	mouse.Moved:Connect(onMouseMoved)
+	Player:GetMouse().Move:Connect(onMouseMoved)
 end
 
 function BaseCamera:KnitInit()
