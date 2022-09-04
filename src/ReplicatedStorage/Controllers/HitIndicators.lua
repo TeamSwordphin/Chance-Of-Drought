@@ -14,7 +14,7 @@ local HIT_INDICATOR_LIFE = 2
 
 local MainGui
 
-function IndicatorService:_NewIndicator(direction, damage)
+function HitIndicators:_NewIndicator(direction, damage)
 	local indicator = {
 		Start = os.clock(),
 		Direction = direction,
@@ -34,7 +34,7 @@ function IndicatorService:_NewIndicator(direction, damage)
 end
 
 function HitIndicators:KnitStart()
-	MainGui = Player.PlayerGui.MainGui
+	MainGui = Player.PlayerGui.Crosshair
 
 	--- Bind the indicators to render
 	RunService:BindToRenderStep("HitIndicators", 10, function()
