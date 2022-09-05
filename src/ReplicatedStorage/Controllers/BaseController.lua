@@ -10,6 +10,8 @@ local BaseController = Knit.CreateController({
 	Camera = workspace.Camera,
 })
 
+local BaseEquipment
+
 local EMPTY_VECTOR = Vector3.new()
 
 local BASE_MOVE_SPEED = 12
@@ -22,7 +24,6 @@ function BaseController:KnitStart()
 	local rotation = CFrame.new()
 
 	local keyboard = Input.Keyboard.new()
-	local equipment = self.Controllers.Character.BaseEquipment
 
 	local function onCharacterAdded(newCharacter)
 		character = newCharacter
@@ -69,7 +70,7 @@ function BaseController:KnitStart()
 	end
 
 	--- Init
-	onCharacterAdded(self.Player.Character or self.Player.CharacterAdded:Wait())
+	onCharacterAdded(Player.Character or Player.CharacterAdded:Wait())
 
 	--- Connect events
 	Player.CharacterAdded:Connect(onCharacterAdded)
@@ -78,6 +79,8 @@ function BaseController:KnitStart()
 	keyboard.KeyUp:Connect(onKeyUp)
 end
 
-function BaseController:KnitInit() end
+function BaseController:KnitInit()
+	BaseEquipment = Knit.GetController("BaseEquipment")
+end
 
 return BaseController
