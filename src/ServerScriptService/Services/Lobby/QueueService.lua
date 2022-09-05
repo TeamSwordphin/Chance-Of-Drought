@@ -66,16 +66,16 @@ function QueueService:Add(player, lobby)
 					local teleportOptions = Instance.new("TeleportOptions")
 					teleportOptions.ShouldReserveServer = true
 					local success = SafeTeleport(10813419765, playersInQueue[lobby].Players, teleportOptions)
-					print("TELE")
 					table.clear(playersInQueue[lobby].Players)
 					playersInQueue[lobby].Going = false
 					lobby.Gate.Timer.Counter.Text = ""
+					lobby.Gate.PlayerCap.Counter.Text =
+						string.format("%s/%s", #playersInQueue[lobby].Players, self.MaxPlayers)
 					resolve()
 				end
 			end
 		end)
 	end
-	print(playersInQueue)
 end
 
 function QueueService:Remove(player)
@@ -91,7 +91,6 @@ function QueueService:Remove(player)
 			end
 		end
 	end
-	print(playersInQueue)
 end
 
 function QueueService:KnitStart()
