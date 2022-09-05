@@ -2,6 +2,7 @@ local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
 
 local QueueService = Knit.CreateService({
 	Name = "QueueService",
+	MaxPlayers = 5,
 	Client = {},
 })
 
@@ -21,7 +22,7 @@ end
 
 function QueueService:Add(player, lobby)
 	-- check max users
-	if #playersInQueue[lobby].Players >= 5 then
+	if #playersInQueue[lobby].Players >= self.MaxPlayers then
 		return
 	end
 	-- check if already in queue
@@ -41,7 +42,7 @@ function QueueService:Add(player, lobby)
 	)
 
 	table.insert(playersInQueue[lobby].Players, player)
-	lobby.Gate.PlayerCap.Counter.Text = #playersInQueue[lobby].Players .. "/5"
+	lobby.Gate.PlayerCap.Counter.Text = string.format("%s/%s", #playersInQueue[lobby].Players, self.MaxPlayers)
 
 	if #playersInQueue[lobby].Players > 0 and not playersInQueue[lobby].Going then
 		playersInQueue[lobby].Going = true
@@ -64,9 +65,9 @@ function QueueService:Add(player, lobby)
 					--Teleport players
 					local teleportOptions = Instance.new("TeleportOptions")
 					teleportOptions.ShouldReserveServer = true
-					SafeTeleport(10813419765, playersInQueue[lobby].Players, teleportOptions)
+					local success = SafeTeleport(10813419765, playersInQueue[lobby].Players, teleportOptions)
 					print("TELE")
-					playersInQueue[lobby].Players = {}
+					table.clear(playersInQueue[lobby].Players)
 					playersInQueue[lobby].Going = false
 					lobby.Gate.Timer.Counter.Text = ""
 					resolve()
@@ -82,7 +83,8 @@ function QueueService:Remove(player)
 		for i, value in ipairs(data.Players) do
 			if player == value then
 				table.remove(playersInQueue[lobby].Players, i)
-				lobby.Gate.PlayerCap.Counter.Text = #playersInQueue[lobby].Players .. "/5"
+				lobby.Gate.PlayerCap.Counter.Text =
+					string.format("%s/%s", #playersInQueue[lobby].Players, self.MaxPlayers)
 				if #playersInQueue[lobby].Players == 0 then
 					playersInQueue[lobby].Timer:cancel()
 				end

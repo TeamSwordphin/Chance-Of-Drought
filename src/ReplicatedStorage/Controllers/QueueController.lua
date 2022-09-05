@@ -22,20 +22,22 @@ function QueueController:KnitStart()
 		LobbyId = nil
 		isIn = false
 	end)
-
-	Players.LocalPlayer.CharacterAdded:Connect(function(character)
+	local function onDeathRemove(character)
 		character:WaitForChild("Humanoid").Died:Connect(function()
 			QueueService:Remove(Players.LocalPlayer)
 			ExitLobby.Enabled = false
 			isIn = false
 			LobbyId = nil
 		end)
-	end)
+	end
+	onDeathRemove(Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait())
+	Players.LocalPlayer.CharacterAdded:Connect(onDeathRemove)
 
 	for _, lobby in ipairs(lobbys) do
 		lobby.Gate.Touched:Connect(function(hit)
 			if
 				hit.parent:FindFirstChild("Humanoid")
+				and hit.parent.Humanoid.Health > 0
 				and hit.parent.Name == Players.LocalPlayer.Name
 				and isIn == false
 			then
