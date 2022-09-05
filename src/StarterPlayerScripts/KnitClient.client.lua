@@ -14,6 +14,10 @@ end
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
-Knit.AddControllers(ReplicatedStorage.Controllers)
+if game.PlaceId == 10299014171 then -- check if it's the lobby
+	Knit.AddControllers(ReplicatedStorage.Controllers.Lobby)
+else -- it's the game
+	Knit.AddControllers(ReplicatedStorage.Controllers)
+end
 
 Knit.Start():catch(warn)
