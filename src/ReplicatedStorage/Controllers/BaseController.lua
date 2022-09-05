@@ -4,6 +4,9 @@ local Input = require(game:GetService("ReplicatedStorage").Packages.Input)
 local TweenService = game:GetService("TweenService")
 local Player = game:GetService("Players").LocalPlayer
 local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Lerp = require(ReplicatedStorage.Modules.Lerp)
 
 local BaseController = Knit.CreateController({
 	Name = "BaseController",
@@ -16,8 +19,6 @@ local EMPTY_VECTOR = Vector3.new()
 
 local BASE_MOVE_SPEED = 12
 local BASE_SPRINT_FACTOR = 2
-
-local BASE_ROTATION_TIMER = 2
 
 function BaseController:KnitStart()
 	local character, humanoid, rootPart
@@ -49,12 +50,13 @@ function BaseController:KnitStart()
 
 		--- Movement
 		local stance = character:GetAttribute("Stance")
+		local sprinting = stance == "Sprint"
 
-		humanoid.WalkSpeed = self.Shared.Lerp(
-			humanoid.WalkSpeed,
-			BASE_MOVE_SPEED * (stance == "Sprint" and BASE_SPRINT_FACTOR or 1),
-			math.min(delta * 10, 1)
-		)
+		humanoid.WalkSpeed =
+			Lerp(humanoid.WalkSpeed, BASE_MOVE_SPEED * (sprinting and BASE_SPRINT_FACTOR or 1), math.min(delta * 10, 1))
+
+		--- Camera Field Of View
+		Player.PlayerScripts.PlayerCameraMain:SetAttribute("FieldOfView", sprinting and 84 or 78)
 	end
 
 	local function onKeyDown(keyCode)

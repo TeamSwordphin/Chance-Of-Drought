@@ -27,7 +27,7 @@ function SpringController.Create(self, mass, force, damping, speed)
 		if z ~= z or z == math.huge or z == -math.huge then
 			z = 0
 		end
-		self.Velocity = self.Velocity + Vector3.new(x, y, z)
+		self.Velocity += Vector3.new(x, y, z)
 	end
 
 	function spring.Update(self, dt)
@@ -39,8 +39,8 @@ function SpringController.Create(self, mass, force, damping, speed)
 
 			acceleration = acceleration - self.Velocity * self.Damping
 
-			self.Velocity = self.Velocity + acceleration * scaledDeltaTime
-			self.Position = self.Position + self.Velocity * scaledDeltaTime
+			self.Velocity += acceleration * scaledDeltaTime
+			self.Position += self.Velocity * scaledDeltaTime
 		end
 
 		return self.Position
