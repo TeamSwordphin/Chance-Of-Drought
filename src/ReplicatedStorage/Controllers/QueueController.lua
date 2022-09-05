@@ -34,7 +34,11 @@ function QueueController:KnitStart()
 
 	for _, lobby in ipairs(lobbys) do
 		lobby.Gate.Touched:Connect(function(hit)
-			if hit.parent:FindFirstChild("Humanoid") and isIn == false then
+			if
+				hit.parent:FindFirstChild("Humanoid")
+				and hit.parent.Name == Players.LocalPlayer.Name
+				and isIn == false
+			then
 				QueueService:Add(lobby)
 				ExitLobby.Enabled = true
 				isIn = true
