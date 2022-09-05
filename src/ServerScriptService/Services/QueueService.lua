@@ -40,6 +40,7 @@ function QueueService:Add(player, lobby)
 	)
 
 	table.insert(playersInQueue[lobby].Players, player)
+	lobby.Gate.PlayerCap.Counter.Text = #playersInQueue[lobby].Players .. "/5"
 
 	if #playersInQueue[lobby].Players > 0 and not playersInQueue[lobby].Going then
 		playersInQueue[lobby].Going = true
@@ -80,6 +81,7 @@ function QueueService:Remove(player)
 		for i, value in ipairs(data.Players) do
 			if player == value then
 				table.remove(playersInQueue[lobby].Players, i)
+				lobby.Gate.PlayerCap.Counter.Text = #playersInQueue[lobby].Players .. "/5"
 				if #playersInQueue[lobby].Players == 0 then
 					playersInQueue[lobby].Timer:cancel()
 				end
