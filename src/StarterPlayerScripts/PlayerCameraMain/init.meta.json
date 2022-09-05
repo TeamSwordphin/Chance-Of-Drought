@@ -1,0 +1,34 @@
+{
+  "$properties": {
+    "Attributes": {
+      "BaseFirstPersonHeight": { "Number": 1.75 },
+      "BaseHeight": { "Number": 1 },
+      "BobbingEnabled": { "Bool": false },
+      "BobbingIntensity": { "Number": 25 },
+      "BobbingSpeed": { "Number": 100 },
+      "BobbingSwayXScale": { "Number": 1.3 },
+      "BobbingSwayYScale": { "Number": 3 },
+      "CameraEnabled": { "Bool": true },
+      "FieldOfView": { "Number": 78 },
+      "FirstPersonMode": { "Bool": false },
+      "GamepadDeadzone": { "Number": 0.15 },
+      "GamepadSensitivity": { "Number": 0.5 },
+      "MaxUpDownLookAngles": { "NumberRange": [-1.1, 1.1] },
+      "MouseLock": { "Bool": true },
+      "MouseSensitivity": { "Number": 0.004 },
+      "OffsetFirstPersonHeight": { "Number": 1.1 },
+      "OffsetFirstPersonShoulder": { "Number": 0 },
+      "OffsetFirstPersonTilt": { "Number": 0 },
+      "OffsetFirstPersonZoom": { "Number": -0.25 },
+      "OffsetHeight": { "Number": 4 },
+      "OffsetShoulder": { "Number": 0 },
+      "OffsetZoom": { "Number": 15 },
+      "PopperCamEnabled": { "Bool": true },
+      "PopperCamMinimumSpacing": { "Number": 0.2 },
+      "Smoothness": { "Number": 0 },
+      "SpectateSendFrequency": { "Number": 0.03 },
+      "SpectatingPlayerName": { "String": "" },
+      "TouchSensitivity": { "Number": 0.008 }
+    }
+  }
+}
