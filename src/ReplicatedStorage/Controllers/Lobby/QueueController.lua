@@ -4,6 +4,8 @@ local QueueController = Knit.CreateController({ Name = "QueueController" })
 
 local QueueService
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
 
 function QueueController:KnitStart()
 	local lobbys = workspace.Lobbys:GetChildren()
@@ -53,6 +55,7 @@ end
 
 function QueueController:KnitInit()
 	QueueService = Knit.GetService("QueueService")
+	TeleportService:SetTeleportGui(ReplicatedStorage.TeleportGui)
 end
 
 return QueueController
