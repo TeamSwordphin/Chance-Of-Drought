@@ -6,8 +6,8 @@ local QueueService = Knit.CreateService({
 	Client = {},
 })
 
-local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
 local Promise = require(Knit.Util.Promise)
 local SafeTeleport = require(game:GetService("ReplicatedStorage").Modules.SafeTeleport)
 local playersInQueue = {}
@@ -51,7 +51,7 @@ function QueueService:Add(player, lobby)
 				playersInQueue[lobby].Going = false
 				lobby.Gate.Timer.Counter.Text = ""
 			end)
-
+			-- Countdown to teleport
 			for i = 20, 0, -1 do
 				if #playersInQueue[lobby].Players > 0 then
 					lobby.Gate.Timer.Counter.Text = tostring(i)
@@ -65,6 +65,13 @@ function QueueService:Add(player, lobby)
 					--Teleport players
 					local teleportOptions = Instance.new("TeleportOptions")
 					teleportOptions.ShouldReserveServer = true
+					for _, player in ipairs(playersInQueue[lobby].Players) do
+						local TeleportingGui = ServerStorage.Teleporting:Clone()
+						TeleportingGui.Parent = player.PlayerGui
+						if player.Character then
+							player.Character:Destroy()
+						end
+					end
 					local success = SafeTeleport(10813419765, playersInQueue[lobby].Players, teleportOptions)
 					table.clear(playersInQueue[lobby].Players)
 					playersInQueue[lobby].Going = false
