@@ -24,12 +24,14 @@ function GameLobbyService:KnitStart()
 end
 
 function GameLobbyService:KnitInit()
+	for _, player in ipairs(Players:GetChildren()) do
+		table.insert(self.Squad, player)
+	end
 	Players.PlayerAdded:Connect(function(player)
 		table.insert(self.Squad, player)
 	end)
 	Players.PlayerRemoving:Connect(function(player)
-		table.find(self.Squad, player)
-		table.remove(self.Squad, player)
+		table.remove(self.Squad, table.find(self.Squad, player))
 	end)
 end
 
