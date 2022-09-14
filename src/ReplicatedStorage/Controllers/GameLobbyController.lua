@@ -12,6 +12,7 @@ local Player = Players.LocalPlayer
 
 local CharScreen = Player.PlayerGui.CharacterScreen
 local PlayerList = CharScreen.PlayerList.Players
+local CountdownGui = CharScreen.Countdown
 
 local function CreateCard(player)
 	local plrCard = ReplicatedStorage.UIModules.PlayerCard:Clone()
@@ -51,6 +52,11 @@ function GameLobbyController:KnitInit()
 	end
 	Players.PlayerRemoving:Connect(function(player)
 		RemoveCard(player)
+	end)
+	-- Countdown Attribute Connection
+	CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
+	workspace:GetAttributeChangedSignal("LobbyTimer"):Connect(function()
+		CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
 	end)
 end
 
