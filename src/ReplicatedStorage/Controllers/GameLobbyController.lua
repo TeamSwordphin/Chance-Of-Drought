@@ -60,8 +60,11 @@ function GameLobbyController:KnitInit()
 	CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
 	workspace:GetAttributeChangedSignal("LobbyTimer"):Connect(function()
 		CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
+		if workspace:GetAttribute("LobbyTimer") == "" then
+			CharScreen.Enabled = false
+		end
 	end)
-	-- class select
+	-- Class select
 	for _, gui in ipairs(ClassSelect:GetChildren()) do
 		if gui:IsA("ImageButton") then
 			gui.Activated:Connect(function()
