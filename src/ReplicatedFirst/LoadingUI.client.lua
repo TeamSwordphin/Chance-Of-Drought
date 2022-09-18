@@ -19,7 +19,7 @@ end
 
 ReplicatedFirst:RemoveDefaultLoadingScreen()
 
-local Knit = require(ReplicatedStorage.Packages.Knit)
+local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
 
 Knit.OnStart()
 	:andThen(function()
