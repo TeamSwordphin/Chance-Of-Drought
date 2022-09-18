@@ -6,6 +6,7 @@ local GameLobbyController = Knit.CreateController({
 	Squad = {}, -- Squad[player] =  {PlayerCard = Instance}
 })
 
+local GameLobbyService
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -13,6 +14,7 @@ local Player = Players.LocalPlayer
 local CharScreen = Player.PlayerGui.CharacterScreen
 local PlayerList = CharScreen.PlayerList.Players
 local CountdownGui = CharScreen.Countdown
+local ClassSelect = CharScreen.ClassSelect
 
 local function CreateCard(player)
 	local plrCard = ReplicatedStorage.UIModules.PlayerCard:Clone()
@@ -37,6 +39,7 @@ end
 function GameLobbyController:KnitStart() end
 
 function GameLobbyController:KnitInit()
+	GameLobbyService = Knit.GetService("GameLobbyService")
 	CharScreen.Enabled = true
 	-- Camera Focus
 	local look = workspace:WaitForChild("GameLobbyPreview"):WaitForChild("Look")
@@ -58,6 +61,20 @@ function GameLobbyController:KnitInit()
 	workspace:GetAttributeChangedSignal("LobbyTimer"):Connect(function()
 		CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
 	end)
+	-- class select
+	for _, gui in ipairs(ClassSelect:GetChildren()) do
+		if gui:IsA("ImageButton") then
+			gui.Activated:Connect(function()
+				for _, ui in ipairs(ClassSelect:GetChildren()) do
+					if ui:IsA("ImageButton") then
+						ui.UIStroke.Thickness = 0
+					end
+				end
+				gui.UIStroke.Thickness = 4
+				GameLobbyService.Class:Fire(gui.Name)
+			end)
+		end
+	end
 end
 
 return GameLobbyController

@@ -2,7 +2,9 @@ local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
 
 local GameLobbyService = Knit.CreateService({
 	Name = "GameLobbyService",
-	Client = {},
+	Client = {
+		Class = Knit.CreateSignal(),
+	},
 	Squad = {},
 	Timer = nil,
 })
@@ -18,6 +20,7 @@ function GameLobbyService:KnitStart()
 			workspace:SetAttribute("LobbyTimer", i)
 			task.wait(1)
 		end
+		workspace:SetAttribute("LobbyTimer", "")
 		print("Game Start")
 		resolve()
 	end)
@@ -32,6 +35,11 @@ function GameLobbyService:KnitInit()
 	end)
 	Players.PlayerRemoving:Connect(function(player)
 		table.remove(self.Squad, table.find(self.Squad, player))
+	end)
+	self.Client.Class:Connect(function(player, class)
+		if workspace:GetAttribute("LobbyTimer") ~= "" then
+			player:SetAttribute("Class", class)
+		end
 	end)
 end
 
