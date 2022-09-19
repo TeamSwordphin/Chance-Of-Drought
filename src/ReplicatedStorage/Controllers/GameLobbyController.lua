@@ -22,13 +22,18 @@ local function CreateCard(player)
 		PlayerCard = plrCard,
 		Champion = "Hawk Eye",
 	}
-	plrCard.NameLabel.Text = player.Name
+	plrCard.TextFrame.NameLabel.Text = player.Name
+	plrCard.TextFrame.ClassLabel.Text = player:GetAttribute("Class") or ""
 	local userId = player.UserId
 	local thumbType = Enum.ThumbnailType.HeadShot
 	local thumbSize = Enum.ThumbnailSize.Size180x180
 	local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
 	plrCard.Icon.Image = content
 	plrCard.Parent = PlayerList
+	player:GetAttributeChangedSignal("Class"):Connect(function()
+		plrCard.TextFrame.ClassLabel.Text = player:GetAttribute("Class") or ""
+	end)
+	return plrCard
 end
 
 local function RemoveCard(player)
@@ -56,14 +61,6 @@ function GameLobbyController:KnitInit()
 	Players.PlayerRemoving:Connect(function(player)
 		RemoveCard(player)
 	end)
-	-- Countdown Attribute Connection
-	CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
-	workspace:GetAttributeChangedSignal("LobbyTimer"):Connect(function()
-		CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
-		if workspace:GetAttribute("LobbyTimer") == "" then
-			CharScreen.Enabled = false
-		end
-	end)
 	-- Class select
 	for _, gui in ipairs(ClassSelect:GetChildren()) do
 		if gui:IsA("ImageButton") then
@@ -78,6 +75,14 @@ function GameLobbyController:KnitInit()
 			end)
 		end
 	end
+	-- Countdown Attribute Connection
+	CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
+	workspace:GetAttributeChangedSignal("LobbyTimer"):Connect(function()
+		CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
+		if workspace:GetAttribute("LobbyTimer") == "" then
+			CharScreen.Enabled = false
+		end
+	end)
 end
 
 return GameLobbyController
