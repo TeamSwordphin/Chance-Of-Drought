@@ -10,7 +10,11 @@ local GameLobbyService = Knit.CreateService({
 })
 
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local Promise = require(Knit.Util.Promise)
+
+local podCam = workspace:WaitForChild("DropPods"):WaitForChild("PodCam")
+local pod = workspace:WaitForChild("DropPods"):WaitForChild("Pod")
 
 Players.CharacterAutoLoads = false
 
@@ -23,6 +27,21 @@ function GameLobbyService:KnitStart()
 		workspace:SetAttribute("LobbyTimer", "")
 		print("Game Start")
 		resolve()
+	end):andThen(function()
+		for _, player in ipairs(self.Squad) do
+			local playerPod = pod:Clone()
+			playerPod.Name = player.Name
+			playerPod:PivotTo(
+				CFrame.new(Vector3.new(podCam.Position.X + 50, podCam.Position.Y + 400, podCam.Position.Z + 50))
+			)
+			playerPod.Parent = workspace.DropPods.Pods
+			local podTween = TweenService:Create(
+				playerPod,
+				TweenInfo.new(3),
+				{ Position = Vector3.new(podCam.Position.X + 50, podCam.Position.Y, podCam.Position.Z + 50) }
+			)
+			podTween:Play()
+		end
 	end)
 end
 
