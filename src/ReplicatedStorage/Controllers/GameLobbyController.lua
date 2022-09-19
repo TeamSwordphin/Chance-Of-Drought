@@ -8,8 +8,11 @@ local GameLobbyController = Knit.CreateController({
 
 local GameLobbyService
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
+
+local camStepped
 
 local CharScreen = Player.PlayerGui.CharacterScreen
 local PlayerList = CharScreen.PlayerList.Players
@@ -50,7 +53,8 @@ function GameLobbyController:KnitInit()
 	local look = workspace:WaitForChild("GameLobbyPreview"):WaitForChild("Look")
 	self.Camera.CameraType = Enum.CameraType.Watch
 	self.Camera.CameraSubject = look
-	self.Camera.CFrame = CFrame.new(Vector3.new(look.Position.X, look.Position.Y, look.Position.Z + 30), look.Position)
+	self.Camera.CFrame =
+		CFrame.lookAt(Vector3.new(look.Position.X, look.Position.Y, look.Position.Z + 30), look.Position)
 	-- PlayerCard Setup
 	Players.PlayerAdded:Connect(function(player)
 		CreateCard(player)
@@ -81,6 +85,13 @@ function GameLobbyController:KnitInit()
 		CountdownGui.Text = workspace:GetAttribute("LobbyTimer")
 		if workspace:GetAttribute("LobbyTimer") == "" then
 			CharScreen.Enabled = false
+			local podCam = workspace:WaitForChild("DropPods"):WaitForChild("PodCam")
+			local pod = workspace:WaitForChild("DropPods"):WaitForChild("Pods"):WaitForChild(Player.Name)
+			self.Camera.CameraType = Enum.CameraType.Scriptable
+			camStepped = RunService.RenderStepped:Connect(function(delta)
+				self.Camera.CFrame = CFrame.lookAt(podCam.Position, pod.Position)
+			end)
+			--TODO: Disconnect this on finish of tween
 		end
 	end)
 end
