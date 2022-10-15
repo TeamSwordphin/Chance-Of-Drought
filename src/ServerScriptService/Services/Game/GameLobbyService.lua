@@ -40,7 +40,11 @@ function GameLobbyService:KnitStart()
 				TweenInfo.new(3),
 				{ Position = Vector3.new(podCam.Position.X + 50, podCam.Position.Y, podCam.Position.Z + 50) }
 			)
-			podTween:Play()
+			task.defer(function()
+				podTween:Play()
+				podTween.Completed:Wait()
+				workspace:SetAttribute("PodHasDropped", true)
+			end)
 		end
 	end)
 end
@@ -51,12 +55,14 @@ function GameLobbyService:KnitInit()
 	end
 	Players.PlayerAdded:Connect(function(player)
 		table.insert(self.Squad, player)
+		player:SetAttribute("Class", "Hammer")
 	end)
 	Players.PlayerRemoving:Connect(function(player)
 		table.remove(self.Squad, table.find(self.Squad, player))
 	end)
 	self.Client.Class:Connect(function(player, class)
 		if workspace:GetAttribute("LobbyTimer") ~= "" then
+			--TODO: Validate
 			player:SetAttribute("Class", class)
 		end
 	end)
