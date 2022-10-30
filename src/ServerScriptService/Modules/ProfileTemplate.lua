@@ -1,7 +1,12 @@
 local ProfileTemplate = {
 	Coins = 0,
 	ItemsPool = {},
-	CharacterPool = {},
+	CharacterPool = {
+		["Hammer"] = true,
+		["Axe"] = false,
+		["Staff"] = false,
+		["Sword"] = false,
+	},
 	XP = 0,
 	Achievements = {},
 	Ban = {
