@@ -1,18 +1,20 @@
 local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
+local Janitor = require(game:GetService("ReplicatedStorage").Packages.Janitor)
 
 local GameLobbyController = Knit.CreateController({
 	Name = "GameLobbyController",
 	Camera = workspace.Camera,
-	Squad = {}, -- Squad[player] =  {PlayerCard = Instance}
+	Squad = {}, -- CreateCard()
+	ToCleanConnections = Janitor.new(),
 })
 
 local GameLobbyService
+local DataService
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
 
-local camStepped
+local Player = Players.LocalPlayer
 
 local CharScreen = Player.PlayerGui.CharacterScreen
 local PlayerList = CharScreen.PlayerList.Players
@@ -23,7 +25,7 @@ local function CreateCard(player)
 	local plrCard = ReplicatedStorage.UIModules.PlayerCard:Clone()
 	GameLobbyController.Squad[player] = {
 		PlayerCard = plrCard,
-		Champion = "Hawk Eye",
+		Class = "Hammer",
 	}
 	plrCard.TextFrame.NameLabel.Text = player.Name
 	plrCard.TextFrame.ClassLabel.Text = player:GetAttribute("Class") or ""
@@ -44,10 +46,27 @@ local function RemoveCard(player)
 	GameLobbyController.Squad[player] = nil
 end
 
-function GameLobbyController:KnitStart() end
+local function CharacterSetup()
+	for _, frame in ipairs(ClassSelect:GetChildren()) do
+		if frame:IsA("ImageButton") then
+			if DataService:Get():expect()["CharacterPool"][frame.Name] == true then
+				frame.Active = true
+				frame.Lock.Visible = false
+			else
+				frame.Active = false
+				frame.Lock.Visible = true
+			end
+		end
+	end
+end
+
+function GameLobbyController:KnitStart()
+	CharacterSetup()
+end
 
 function GameLobbyController:KnitInit()
 	GameLobbyService = Knit.GetService("GameLobbyService")
+	DataService = Knit.GetService("DataService")
 	CharScreen.Enabled = true
 	-- Camera Focus
 	local look = workspace:WaitForChild("GameLobbyPreview"):WaitForChild("Look")
@@ -86,12 +105,21 @@ function GameLobbyController:KnitInit()
 		if workspace:GetAttribute("LobbyTimer") == "" then
 			CharScreen.Enabled = false
 			local podCam = workspace:WaitForChild("DropPods"):WaitForChild("PodCam")
-			local pod = workspace:WaitForChild("DropPods"):WaitForChild("Pods"):WaitForChild(Player.Name)
+			local pod = workspace:WaitForChild("DropPods"):WaitForChild("Pods"):WaitForChild("Pod")
 			self.Camera.CameraType = Enum.CameraType.Scriptable
-			camStepped = RunService.RenderStepped:Connect(function(delta)
-				self.Camera.CFrame = CFrame.lookAt(podCam.Position, pod.Position)
-			end)
-			--TODO: Disconnect this on finish of tween
+			GameLobbyController.ToCleanConnections:Add(
+				RunService.RenderStepped:Connect(function(delta)
+					self.Camera.CFrame = CFrame.lookAt(podCam.Position, pod.Position)
+				end),
+				"Disconnect"
+			)
+		end
+	end)
+
+	workspace:GetAttributeChangedSignal("PodHasDropped"):Connect(function()
+		if workspace:GetAttribute("PodHasDropped") == true then
+			print("Pod Finished Dropping")
+			GameLobbyController.ToCleanConnections:Cleanup()
 		end
 	end)
 end
