@@ -5,6 +5,7 @@ local DataService = Knit.CreateService({
 	Client = {
 		DataChanged = Knit.CreateSignal(),
 	},
+	Profiles = {},
 })
 
 ----- Loaded Modules -----
@@ -17,8 +18,6 @@ local ProfileTemplate = require(game:GetService("ServerScriptService").Modules.P
 local Players = game:GetService("Players")
 
 local ProfileStore = ProfileService.GetProfileStore("PlayerData", ProfileTemplate)
-
-local Profiles = {} -- [player] = profile
 
 local function deepCopy(original)
 	local copy = {}
@@ -42,7 +41,7 @@ function DataService.Client:Get(Player)
 end
 
 function DataService:Get(Player)
-	local profile = Profiles[Player]
+	local profile = self.Profiles[Player]
 
 	if profile then
 		return profile.Data
@@ -57,18 +56,28 @@ local function PlayerAdded(player)
 		profile:AddUserId(player.UserId) -- GDPR compliance
 		profile:Reconcile() -- Fill in missing variables from ProfileTemplate (optional)
 		profile:ListenToRelease(function()
-			Profiles[player] = nil
+			DataService.Profiles[player] = nil
 			-- The profile could've been loaded on another Roblox server:
 			player:Kick()
 		end)
 		if player:IsDescendantOf(Players) == true then
-			Profiles[player] = profile
+			DataService.Profiles[player] = profile
 			-- A profile has been successfully loaded:
 		else
 			-- Player left before the profile loaded:
-			profile:Release()
+			DataService.profile:Release()
 		end
-		print(Profiles)
+		player:SetAttribute("Coins", DataService.Profiles[player].Data.Coins)
+		player:GetAttributeChangedSignal("Coins"):Connect(function()
+			DataService.Profiles[player].Data.Coins = player:GetAttribute("Coins")
+			print(DataService.Profiles[player].Data.Coins)
+		end)
+		player:SetAttribute("XP", DataService.Profiles[player].Data.XP)
+		player:GetAttributeChangedSignal("XP"):Connect(function()
+			DataService.Profiles[player].Data.XP = player:GetAttribute("XP")
+			print(DataService.Profiles[player].Data.XP)
+		end)
+		print(DataService.Profiles)
 	else
 		-- The profile couldn't be loaded possibly due to other
 		--   Roblox servers trying to load this profile at the same time:
@@ -88,7 +97,7 @@ function DataService:KnitStart() end
 function DataService:KnitInit()
 	Players.PlayerAdded:Connect(PlayerAdded)
 	Players.PlayerRemoving:Connect(function(player)
-		local profile = Profiles[player]
+		local profile = self.Profiles[player]
 		if profile ~= nil then
 			profile:Release()
 		end
