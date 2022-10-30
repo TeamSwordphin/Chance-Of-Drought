@@ -12,6 +12,7 @@ local GameLobbyService = Knit.CreateService({
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local Promise = require(Knit.Util.Promise)
+local DataService
 
 local podCam = workspace:WaitForChild("DropPods"):WaitForChild("PodCam")
 local pod = workspace:WaitForChild("DropPods"):WaitForChild("Pod")
@@ -28,28 +29,30 @@ function GameLobbyService:KnitStart()
 		print("Game Start")
 		resolve()
 	end):andThen(function()
-		for _, player in ipairs(self.Squad) do
-			local playerPod = pod:Clone()
-			playerPod.Name = player.Name
-			playerPod:PivotTo(
-				CFrame.new(Vector3.new(podCam.Position.X + 50, podCam.Position.Y + 400, podCam.Position.Z + 50))
-			)
-			playerPod.Parent = workspace.DropPods.Pods
-			local podTween = TweenService:Create(
-				playerPod,
-				TweenInfo.new(3),
-				{ Position = Vector3.new(podCam.Position.X + 50, podCam.Position.Y, podCam.Position.Z + 50) }
-			)
-			task.defer(function()
-				podTween:Play()
-				podTween.Completed:Wait()
-				workspace:SetAttribute("PodHasDropped", true)
-			end)
-		end
+		--for _, player in ipairs(self.Squad) do
+		local playerPod = pod:Clone()
+		--playerPod.Name = player.Name
+		playerPod:PivotTo(
+			CFrame.new(Vector3.new(podCam.Position.X + 50, podCam.Position.Y + 400, podCam.Position.Z + 50))
+		)
+		playerPod.Parent = workspace.DropPods.Pods
+		local podTween = TweenService:Create(
+			playerPod,
+			TweenInfo.new(3),
+			{ Position = Vector3.new(podCam.Position.X + 50, podCam.Position.Y, podCam.Position.Z + 50) }
+		)
+		task.defer(function()
+			podTween:Play()
+			podTween.Completed:Wait()
+			workspace:SetAttribute("PodHasDropped", true)
+		end)
+		--end
 	end)
 end
 
 function GameLobbyService:KnitInit()
+	DataService = Knit.GetService("DataService")
+
 	for _, player in ipairs(Players:GetChildren()) do
 		table.insert(self.Squad, player)
 	end
@@ -62,8 +65,9 @@ function GameLobbyService:KnitInit()
 	end)
 	self.Client.Class:Connect(function(player, class)
 		if workspace:GetAttribute("LobbyTimer") ~= "" then
-			--TODO: Validate
-			player:SetAttribute("Class", class)
+			if DataService:Get(player).CharacterPool[class] then
+				player:SetAttribute("Class", class)
+			end
 		end
 	end)
 end
